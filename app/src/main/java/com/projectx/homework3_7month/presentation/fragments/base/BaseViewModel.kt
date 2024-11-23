@@ -2,17 +2,11 @@ package com.projectx.homework3_7month.presentation.fragments.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projectx.homework3_7month.domain.usecase.GetAllNotesUseCase
-import com.projectx.homework3_7month.domain.usecase.InsertTaskUseCase
-import com.projectx.homework3_7month.domain.usecase.TaskDelete
-import com.projectx.homework3_7month.domain.usecase.UpdateTaskUseCase
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 abstract class BaseViewModel : ViewModel() {
 
@@ -35,4 +29,3 @@ abstract class BaseViewModel : ViewModel() {
         }
     }
 }
-
