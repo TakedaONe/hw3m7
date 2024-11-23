@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import com.projectx.homework3_7month.databinding.FragmentTaskListBinding
 
-
 abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
 
     protected abstract val viewModel: VM
     private var _binding: FragmentTaskListBinding? = null
-    protected val binding get() = _binding!!
+    protected val binding: FragmentTaskListBinding
+        get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,11 +28,7 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.loadingState.collect { isLoading ->
-                    if (isLoading) {
-                        showLoading(true)
-                    } else {
-                        showLoading(false)
-                    }
+                    showLoading(isLoading)
                 }
             }
         }
@@ -40,10 +36,7 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorMessage.collect { errorMessage ->
-                    errorMessage?.let {
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
-                        viewModel.errorMessage
-                    }
+                    errorMessage?.let { showToast(it) }
                 }
             }
         }
@@ -51,6 +44,10 @@ abstract class BaseFragment<VM : BaseViewModel> : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroyView() {
