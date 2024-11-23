@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface TaskManagerRepository {
 
-    suspend fun insertTask(taskModel: TaskModel)
-    suspend fun getAllNotes(): Flow<List<TaskModel>>
-    suspend fun getTaskByName(taskName: String): TaskModel?
-    suspend fun updateTask(taskModel: TaskModel)
-    suspend fun deleteTask(task: TaskModel)
-    suspend fun getTask(id:Int):TaskModel?
+    suspend fun insertTask(taskModel: TaskModel): Result<Unit>
+    suspend fun getAllNotes(): Flow<Result<List<TaskModel>>>
+    suspend fun getTaskByName(taskName: String): Result<TaskModel?>
+    suspend fun updateTask(taskModel: TaskModel): Result<Unit>
+    suspend fun deleteTask(task: TaskModel): Result<Unit>
+    suspend fun getTask(id:Int): Result<TaskModel?>
 
 }

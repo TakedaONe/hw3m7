@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#C1D8DB"
-    tools:context=".presentation.fragments.DetailFragment">
+    android:background="@color/background_color"
+    tools:context=".presentation.fragments.detail.DetailFragment"
+    android:padding="16dp">
+
     <LinearLayout
-        android:layout_marginTop="80dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingTop="32dp"
+        android:paddingBottom="16dp">
+
         <EditText
-            android:drawableStart="@drawable/baseline_task_24"
-            android:layout_gravity="center"
             android:id="@+id/tv_task2"
-            android:layout_width="160dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task"
-            android:textColorHint="#474545"
-            android:backgroundTintMode="add"
-            android:backgroundTint="@color/black"/>
+            android:hint="Enter Task"
+            android:drawableStart="@drawable/baseline_task_24"
+            android:drawablePadding="8dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_input_field"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
         <EditText
-            android:drawableStart="@drawable/baseline_access_time_24"
-            android:layout_gravity="center"
             android:id="@+id/tv_date2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="00:00"
-            android:textColorHint="#474545"
-            android:backgroundTint="@color/black"
-            android:backgroundTintMode="add"
-            android:layout_marginStart="100dp"
-            />
-
-
+            android:hint="Time (e.g., 00:00)"
+            android:drawableStart="@drawable/baseline_access_time_24"
+            android:drawablePadding="8dp"
+            android:padding="12dp"
+            android:background="@drawable/rounded_input_field"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/add_photo"
-        android:layout_marginTop="100dp"
-        android:layout_marginStart="100dp"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:src="@drawable/baseline_add_photo_alternate_24"/>
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_image_background"
+        android:src="@drawable/baseline_add_photo_alternate_24"
+        android:contentDescription="Add Photo" />
+
     <ImageButton
         android:id="@+id/btn_save_change"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="300dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/rounded_button"
         android:src="@drawable/baseline_check_24"
-        />
-
-
+        android:contentDescription="Save changes" />
 </LinearLayout>

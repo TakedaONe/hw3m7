@@ -7,39 +7,58 @@ import com.projectx.homework3_7month.domain.model.TaskModel
 import com.projectx.homework3_7month.domain.repository.TaskManagerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.catch
 
-class TaskManagerRepositoryImpl(private val taskManagerDao: TaskManagerDao) :
-    TaskManagerRepository {
+class TaskManagerRepositoryImpl(private val taskManagerDao: TaskManagerDao) : TaskManagerRepository {
 
-    override suspend fun insertTask(taskModel: TaskModel) {
-        taskManagerDao.insertTask(taskModel.toData())
-    }
-
-    override suspend fun getAllNotes():  Flow<List<TaskModel>> {
-        return taskManagerDao.getAllNotes().map {list ->
-            list.map {dto->
-                dto.toDomain()
-            }
+    override suspend fun insertTask(taskModel: TaskModel): Result<Unit> {
+        return try {
+            taskManagerDao.insertTask(taskModel.toData())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
-    override suspend fun getTaskByName(taskName: String): TaskModel? {
-        return taskManagerDao.getTaskByName(taskName)?.toDomain()
+    override suspend fun getAllNotes(): Flow<Result<List<TaskModel>>> {
+        return taskManagerDao.getAllNotes()
+            .map { list -> Result.success(list.map { it.toDomain() }) }
+            .catch { e -> emit(Result.failure(e)) }
     }
 
-    override suspend fun updateTask(taskModel: TaskModel) {
-        taskManagerDao.updateTask(taskModel.toData())
-
+    override suspend fun getTaskByName(taskName: String): Result<TaskModel?> {
+        return try {
+            val task = taskManagerDao.getTaskByName(taskName)?.toDomain()
+            Result.success(task)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    override suspend fun deleteTask(task: TaskModel) {
-        taskManagerDao.deleteTask(task.toData())
+    override suspend fun updateTask(taskModel: TaskModel): Result<Unit> {
+        return try {
+            taskManagerDao.updateTask(taskModel.toData())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-    override suspend fun getTask(id: Int): TaskModel? {
-        val taskDto = taskManagerDao.getTaskById(id)
-       return taskDto?.toDomain()
+    override suspend fun deleteTask(task: TaskModel): Result<Unit> {
+        return try {
+            taskManagerDao.deleteTask(task.toData())
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
-
+    override suspend fun getTask(id: Int): Result<TaskModel?> {
+        return try {
+            val task = taskManagerDao.getTaskById(id)?.toDomain()
+            Result.success(task)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -2,50 +2,59 @@ package com.projectx.homework3_7month.presentation.fragments.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.projectx.homework3_7month.data.dto.TaskDto
 import com.projectx.homework3_7month.databinding.ItemTaskBinding
 import com.projectx.homework3_7month.presentation.model.TaskUI
 
 class TaskAdapter(
     private var taskList: List<TaskUI>,
-    private val onItemClick: (id:Int) -> Unit,
+    private val onItemClick: (id: Int) -> Unit,
     private val onTaskDeleted: (TaskUI) -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
-    inner class TaskViewHolder(val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(taskUI: TaskUI) {
-            binding.tvTask.text = taskUI.taskName
-            binding.tvDate.text = taskUI.taskDate
+    inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
             binding.root.setOnClickListener {
-                onItemClick(taskUI.id)
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    onItemClick(taskList[position].id)
+                }
             }
+        }
+
+        fun bind(taskUI: TaskUI) = with(binding) {
+            tvTask.text = taskUI.taskName
+            tvDate.text = taskUI.taskDate
         }
     }
 
-    private val itemTouch = object : ItemTouchHelper.SimpleCallback(
-        0, ItemTouchHelper.LEFT
-    ) {
-        override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
-            return false
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val position = viewHolder.adapterPosition
-            val taskToDelete = taskList[position]
-            onTaskDeleted(taskToDelete)
-        }
+    fun updateTasks(newTasks: List<TaskUI>) {
+        val diffResult = DiffUtil.calculateDiff(TaskDiffCallback(taskList, newTasks))
+        taskList = newTasks
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun attachSwipeToRecyclerView(recyclerView: RecyclerView) {
-        val itemTouchHelper = ItemTouchHelper(itemTouch)
+        val itemTouchHelper = createItemTouchHelper(onTaskDeleted)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    private fun createItemTouchHelper(onTaskDeleted: (TaskUI) -> Unit): ItemTouchHelper {
+        return ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val taskToDelete = taskList[position]
+                onTaskDeleted(taskToDelete)
+            }
+        })
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -53,17 +62,27 @@ class TaskAdapter(
         return TaskViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return taskList.size
-    }
+    override fun getItemCount(): Int = taskList.size
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val task = taskList[position]
-        holder.bind(task)
+        holder.bind(taskList[position])
     }
 
-    fun updateTasks(newTasks: List<TaskUI>) {
-        taskList = newTasks
-        notifyDataSetChanged()
+    private class TaskDiffCallback(
+        private val oldList: List<TaskUI>,
+        private val newList: List<TaskUI>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].id == newList[newItemPosition].id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
     }
 }
